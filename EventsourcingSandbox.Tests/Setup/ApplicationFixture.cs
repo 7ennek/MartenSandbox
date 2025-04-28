@@ -16,8 +16,6 @@ public class ApplicationFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        if(_applicationFactory is not null)
-            await _applicationFactory.DisposeAsync();
         await _database.Stop();
     }
     

@@ -15,6 +15,5 @@ public class DatabaseFixture
     public async Task Stop()
     {
         await _postgreSqlContainer.StopAsync();
-        await _postgreSqlContainer.DisposeAsync();
     }
 }

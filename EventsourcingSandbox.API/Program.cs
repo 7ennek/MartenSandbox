@@ -1,4 +1,5 @@
 using Marten;
+using Marten.Events.Daemon.Resiliency;
 using Oakton;
 using Wolverine;
 using Wolverine.Http;
@@ -16,9 +17,12 @@ builder.Services.AddMarten(opts =>
         opts.Connection(connectionString!);
         opts.DatabaseSchemaName = "incidents";
     })
+    .UseLightweightSessions()
     // This adds configuration with Wolverine's transactional outbox and
     // Marten middleware support to Wolverine
-    .IntegrateWithWolverine();
+    .IntegrateWithWolverine()
+    .PublishEventsToWolverine("Everything")
+    .AddAsyncDaemon(DaemonMode.HotCold);
 
 builder.Host.UseWolverine(opts =>
 {
@@ -40,8 +44,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.MapGet("/", () => "Hello World!");
 app.MapWolverineEndpoints();
 
 // This is using the Oakton library for command running

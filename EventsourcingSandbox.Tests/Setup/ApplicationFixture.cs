@@ -25,6 +25,16 @@ public class ApplicationFixture : IAsyncLifetime
         return _applicationFactory.CreateClient();
     }
 
+    public IDocumentSession CreateSession()
+    {
+        if(_applicationFactory is null) throw new ArgumentNullException(nameof(_applicationFactory));
+        return _applicationFactory
+            .Services
+            .CreateScope()
+            .ServiceProvider
+            .GetRequiredService<IDocumentSession>();
+    }
+    
     public async Task Reset()
     {
         if (_applicationFactory is null) return;

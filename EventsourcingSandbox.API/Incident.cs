@@ -12,7 +12,7 @@ public class Incident
     public IncidentStatus Status { get; set; } = IncidentStatus.Pending;
     public IncidentCategory? Category { get; set; }
     public bool HasOutstandingResponseToCustomer { get; set; } = false;
-
+    
     // Make serialization easy
     public Incident()
     {

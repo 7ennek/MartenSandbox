@@ -1,5 +1,7 @@
+using EventsourcingSandbox.API;
 using Marten;
 using Marten.Events.Daemon.Resiliency;
+using Marten.Events.Projections;
 using Oakton;
 using Wolverine;
 using Wolverine.Http;
@@ -16,13 +18,15 @@ builder.Services.AddMarten(opts =>
         var connectionString = builder.Configuration.GetConnectionString("Marten");
         opts.Connection(connectionString!);
         opts.DatabaseSchemaName = "incidents";
+        
+        opts.Projections.Add<LoggedIncidentProcessor>(ProjectionLifecycle.Async);
     })
     .UseLightweightSessions()
     // This adds configuration with Wolverine's transactional outbox and
     // Marten middleware support to Wolverine
     .IntegrateWithWolverine()
     .PublishEventsToWolverine("Everything")
-    .AddAsyncDaemon(DaemonMode.HotCold);
+    .AddAsyncDaemon(DaemonMode.Solo);
 
 builder.Host.UseWolverine(opts =>
 {
